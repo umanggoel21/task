@@ -1,0 +1,13 @@
+venv/
+Backend/venv/
+Backend/__pycache__/
+Backend/app.db
+Backend/.env
+Backend/test_db.py
+Backend/test_api.py
+Backend/test_integration.py
+frontend/node_modules/
+frontend/build/
+.env
+*.pyc
+__pycache__/
