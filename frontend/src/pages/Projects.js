@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
-import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
 
 function Projects() {
@@ -13,7 +12,6 @@ function Projects() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [projectMembers, setProjectMembers] = useState({});  // { projectId: [members] }
-    const { } = useAuth();
     const navigate = useNavigate();
 
     const fetchProjects = useCallback(async () => {
