@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
@@ -17,13 +17,7 @@ function Tasks() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  useEffect(() => {
-    fetchProjectDetails();
-    fetchTasks();
-    fetchMembers();
-  }, [id]);
-
-  const fetchProjectDetails = async () => {
+  const fetchProjectDetails = useCallback(async () => {
     try {
       const res = await api.get('/api/projects');
       const current = res.data.find(p => p.id === parseInt(id));
@@ -31,25 +25,31 @@ function Tasks() {
     } catch {
       console.log('Could not fetch project details');
     }
-  };
+  }, [id]);
 
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       const res = await api.get(`/api/projects/${id}/tasks`);
       setTasks(res.data);
     } catch {
       navigate('/login');
     }
-  };
+  }, [id, navigate]);
 
-  const fetchMembers = async () => {
+  const fetchMembers = useCallback(async () => {
     try {
       const res = await api.get(`/api/projects/${id}/members`);
       setMembers(res.data);
     } catch {
       console.log('Could not fetch members');
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchProjectDetails();
+    fetchTasks();
+    fetchMembers();
+  }, [fetchProjectDetails, fetchTasks, fetchMembers]);
 
   const createTask = async (e) => {
     e.preventDefault();

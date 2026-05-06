@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
@@ -13,31 +13,31 @@ function Projects() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [projectMembers, setProjectMembers] = useState({});  // { projectId: [members] }
-    const { user } = useAuth();
+    const { } = useAuth();
     const navigate = useNavigate();
 
-    useEffect(() => {
-        fetchProjects();
-    }, []);
-
-    // Fetch members for a specific project and store by project id
-    const fetchMembers = async (projectId) => {
-        try {
-            const res = await api.get(`/api/projects/${projectId}/members`);
-            setProjectMembers(prev => ({ ...prev, [projectId]: res.data }));
-        } catch {
-            console.log('Could not fetch members for project', projectId);
-        }
-    };
-
-    const fetchProjects = async () => {
+    const fetchProjects = useCallback(async () => {
         try {
             const res = await api.get('/api/projects');
             setProjects(res.data);
         } catch {
             navigate('/login');
         }
-    };
+    }, [navigate]);
+
+    useEffect(() => {
+        fetchProjects();
+    }, [fetchProjects]);
+
+    // Fetch members for a specific project and store by project id
+    const fetchMembers = useCallback(async (projectId) => {
+        try {
+            const res = await api.get(`/api/projects/${projectId}/members`);
+            setProjectMembers(prev => ({ ...prev, [projectId]: res.data }));
+        } catch {
+            console.log('Could not fetch members for project', projectId);
+        }
+    }, []);
 
     const createProject = async (e) => {
         e.preventDefault();
